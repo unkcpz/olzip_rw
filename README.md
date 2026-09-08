@@ -13,12 +13,28 @@ The tool is targeting to inspect an online zip URI and read a single file out wi
     - The download will always showing detail progress info.
     - I provide the option if user insist to download and loading the whole file into memory.
 - the inner file can return as seekable therefore impl back to the zip for further unzip.
+- limit the scope to only read, will not modify the zip.
 
 ## Usage
 
 The tool is supposed to be used as a JS library.
 
 ... npm install, JS call.
+
+## roadmap
+
+- [x] Basic ZipArchieve read from a buff.
+- [ ] uri as the cli input.
+- [x] can read/inspect a single file by index.
+- [ ] TUI?
+- [ ] A cli inquery app, stdin, stdout interactive mode.
+- [ ] list files with hirerachy.
+- [ ] list files with more detail information.
+- [ ] recursive zip inspect if the inner file is a zip.
+- [ ] !! http range read for large zip file.
+- [ ] progress bar when request.
+- [ ] wasm binding and JS interface for APIs.
+- [ ] full wasm app or JS app calling wasm interfaces?
 
 ## For developers
 
