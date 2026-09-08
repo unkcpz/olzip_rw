@@ -3,10 +3,11 @@ name = "ol_zip_reader"
 version = "0.1.0"
 edition = "2024"
 
-[lib]
-crate-type = ["cdylib"]
+# [lib]
+# crate-type = ["cdylib"]
 
 [dependencies]
+anyhow = "1.0.104"
 log = "0.4.34"
 reqwest = { version = "0.13.4", features = ["blocking"] }
 thiserror = "2.0.20"

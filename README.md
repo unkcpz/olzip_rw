@@ -12,6 +12,7 @@ The tool is targeting to inspect an online zip URI and read a single file out wi
 - If range HTTP is not supported, only zip file size < x Mb will be download and load to memory to be read. (x is setable from caller and recommended to be less than 1 Mb)
     - The download will always showing detail progress info.
     - I provide the option if user insist to download and loading the whole file into memory.
+- the inner file can return as seekable therefore impl back to the zip for further unzip.
 
 ## Usage
 
