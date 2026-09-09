@@ -24,7 +24,7 @@ The tool is supposed to be used as a JS library.
 ## roadmap
 
 - [x] Basic ZipArchieve read from a buff.
-- [ ] uri as the cli input.
+- [x] uri as the first cli input.
 - [x] can read/inspect a single file by index.
 - [ ] TUI?
 - [ ] A cli inquery app, stdin, stdout interactive mode.
@@ -32,7 +32,10 @@ The tool is supposed to be used as a JS library.
 - [ ] list files with more detail information.
 - [ ] recursive zip inspect if the inner file is a zip.
 - [ ] !! http range read for large zip file.
-- [ ] progress bar when request.
+- [x] progress bar when making HTTP request to download the zip.
+    - use trickle (https://github.com/mariusae/trickle) to manually test the behavior in slow network
+- [ ] bench on the ram footprint to see the range call works and the force full buff use a lot of ram.
+- [ ] second arg to force the full download or force the HTTP range call.
 - [ ] wasm binding and JS interface for APIs.
 - [ ] full wasm app or JS app calling wasm interfaces?
 

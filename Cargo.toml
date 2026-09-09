@@ -8,6 +8,7 @@ edition = "2024"
 
 [dependencies]
 anyhow = "1.0.104"
+indicatif = "0.18.6"
 log = "0.4.34"
 reqwest = { version = "0.13.4", features = ["blocking"] }
 thiserror = "2.0.20"
