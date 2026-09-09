@@ -4,6 +4,7 @@ use std::io::{Cursor, Read, Seek, Write};
 // maybe it can because it is "not (WebAssembly and (target_os=unknown or bare-metal))"
 // If the target_os is specified. But anyway much easier if it is non-blocking.
 use indicatif::ProgressBar;
+use ol_zip_reader::SeekableHttpReader;
 use reqwest::blocking::Client;
 use zip::ZipArchive;
 
@@ -32,12 +33,12 @@ fn fetch_from_uri(client: Client, uri: &str, len: usize) -> Vec<u8> {
     case
 }
 
-fn list_zip<T>(buf: T) -> anyhow::Result<()>
+fn list_zip<T>(rd: T) -> anyhow::Result<()>
 where
     T: Seek + Read,
 {
     // TODO (jyu): for performance, there is zipArchive::file_names which return an iter of &str
-    let mut zip = ZipArchive::new(buf).unwrap();
+    let mut zip = ZipArchive::new(rd).unwrap();
 
     // TODO (jyu): folder hierachy with proper indentation and unix_mode, size etc.
     for i in 0..zip.len() {
@@ -83,19 +84,27 @@ fn main() -> anyhow::Result<()> {
     // full content fetch: for cases zip < 10k
     // - "https://inria.hal.science/hal-02355563v1/document";
 
-    let client = Client::new();
-    let response = client.head(&uri).send().unwrap();
-    let len: usize = response
-        .headers()
-        .get(reqwest::header::CONTENT_LENGTH)
-        .and_then(|hv| hv.to_str().ok())
-        .and_then(|s| s.parse::<usize>().ok())
-        .unwrap();
+    // need at least two HTTP request calls:
+    // 0. get the header
+    // 1. content (if fetch whole bytes of remote zip)
+    // +x. range requests
+    let mut zip_reader = SeekableHttpReader::new(&uri);
 
-    let buff = fetch_from_uri(client, &uri, len);
-    let mut buff = Cursor::new(buff);
+    {
+        // if fetch all bytes:
+        // let client = Client::new();
+        // let response = client.head(&uri).send().unwrap();
+        // let len: usize = response
+        //     .headers()
+        //     .get(reqwest::header::CONTENT_LENGTH)
+        //     .and_then(|hv| hv.to_str().ok())
+        //     .and_then(|s| s.parse::<usize>().ok())
+        //     .unwrap();
+        // let zip_reader = fetch_from_uri(client, &uri, len);
+        // let mut zip_reader = Cursor::new(zip_reader);
+    }
 
-    let _ = list_zip(&mut buff);
+    let _ = list_zip(&mut zip_reader);
 
     // index
     println!("input the index on which file you wnat to previet:");
@@ -104,7 +113,7 @@ fn main() -> anyhow::Result<()> {
     std::io::stdin().read_line(&mut inp)?;
     let inp = inp.trim_end().parse::<usize>().unwrap();
 
-    let content = get_file_content_from_zip_by_index(&mut buff, inp).unwrap();
+    let content = get_file_content_from_zip_by_index(&mut zip_reader, inp).unwrap();
     let s = String::from_utf8(content).unwrap();
     println!("{}", s);
 
