@@ -122,12 +122,14 @@ where
     log::debug!("List zip start\n");
 
     // TODO (jyu): folder hierachy with proper indentation and unix_mode, size etc.
+    println!("| idx | filename |u/c size (bytes) | unix_mode |");
     for i in 0..zip.len() {
         let file = zip.by_index(i)?;
         println!(
-            "idx: {} - Filename: {} - size: {}",
+            "{} | {} | {} / {} ||  ",
             i,
             file.name(),
+            file.compressed_size(),
             file.size(),
         );
     }
