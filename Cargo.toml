@@ -3,13 +3,36 @@ name = "ol_zip_reader"
 version = "0.1.0"
 edition = "2024"
 
-# [lib]
-# crate-type = ["cdylib"]
+[lib]
+crate-type = ["cdylib", "rlib"]
 
 [dependencies]
+log = { version = "0.4.34", features = ["alloc"] }
+thiserror = "2.0.20"
+# Deflate only: C-based backends (zstd, bzip2, ...) don't build for wasm32-unknown-unknown.
+# If this feature name is rejected, check the feature list of your zip version.
+zip = { version = "8.6.0", default-features = false, features = ["deflate"] }
+bytes = "1.12.1"
+range-cache = "0.1.1"
+url = "2"
+js-sys = "0.3.106"
+wasm-bindgen = "0.2.129"
+console_error_panic_hook = "0.1.7"
+console_log = "1.1.0"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+reqwest = { version = "0.13.4", features = ["blocking"] }
+http = "1.5.0"
+# only needed if your native binary uses them
 anyhow = "1.0.104"
 indicatif = "0.18.6"
-log = { version = "0.4.34", features = ["alloc"] }
-reqwest = { version = "0.13.4", features = ["blocking"] }
-thiserror = "2.0.20"
-zip = "8.0"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "0.2"
+js-sys = "0.3"
+web-sys = { version = "0.3", features = ["XmlHttpRequest", "XmlHttpRequestResponseType"] }
+console_error_panic_hook = "0.1"
+console_log = "1"
+
+[dev-dependencies]
+mockito = "1.7.2"
